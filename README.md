@@ -1,4 +1,3 @@
-# BLENDED_LEARNING
 # Implementation of Logistic Regression Model for Classifying Food Choices for Diabetic Patients
 
 ## AIM:
@@ -9,96 +8,94 @@ To implement a logistic regression model to classify food items for diabetic pat
 2. Anaconda – Python 3.7 Installation / Jupyter notebook
 
 ## Algorithm
-1. Import necessary libraries.
-   
-2.Load the dataset using pd.read_csv().
+1. Load Data Import and prepare the dataset to initiate the analysis workflow.
 
-3.Display data types, basic statistics, and class distributions.
+2. Explore Data Examine the data to understand key patterns, distributions, and feature relationships.
 
-4.Visualize class distributions with a bar plot.
+3. Select Features Choose the most impactful features to improve model accuracy and reduce complexity.
 
-5.Scale feature columns using MinMaxScaler.
+4. Split Data Partition the dataset into training and testing sets for validation purposes.
 
-6.Encode target labels with LabelEncoder.
+5. Scale Features Normalize feature values to maintain consistent scales, ensuring stability during training.
 
-7.Split data into training and testing sets with train_test_split().
+6. Train Model with Hyperparameter Tuning Fit the model to the training data while adjusting hyperparameters to enhance performance.
 
-8.Train LogisticRegression with specified hyperparameters and evaluate the model using metrics and a confusion matrix plot.
- 
+7. Evaluate Model Assess the model’s accuracy and effectiveness on the testing set using performance metrics.
 
 ## Program:
-```
-/*
+```py
+
 Program to implement Logistic Regression for classifying food choices based on nutritional information.
 Developed by: YASHWANTH RAJA DURAI V
-RegisterNumber:  212222040184
-*/
-
+RegisterNumber: 212222040184
 
 import pandas as pd
 from sklearn.model_selection import train_test_split
 from sklearn.linear_model import LogisticRegression
-from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, confusion_matrix, classification_report
+from sklearn.preprocessing import LabelEncoder,MinMaxScaler
+from sklearn.svm import SVC
+from sklearn.preprocessing import StandardScaler
+from sklearn.metrics import accuracy_score,precision_score,recall_score,f1_score,confusion_matrix,classification_report
 import seaborn as sns
 import matplotlib.pyplot as plt
 
-# Load the dataset
-df = pd.read_csv('food_items.csv')
-
-# Inspect the dataset
-print("Dataset Overview:")
+#load dataset 
+df=pd.read_csv("food_items.csv")
+#inspect the dataset
+print("Dataset Overview")
 print(df.head())
-print("\nDataset Info:")
+print("\ndatset Info")
 print(df.info())
 
+X_raw=df.iloc[:, :-1]
+y_raw=df.iloc[:, -1:]
+X_raw
 
-x_raw=df.iloc[:,:-1]
-y_raw=df.iloc[:,-1:]
-x_raw
-scaler = MinMaxScaler() 
-X = scaler.fit_transform(x_raw)
+scaler=MinMaxScaler()
+X=scaler.fit_transform(X_raw)
 
-label_encoder = LabelEncoder()
+label_encoder=LabelEncoder()
+y=label_encoder.fit_transform(y_raw.values.ravel())
+X_train,X_test,y_train,y_test=train_test_split(X,y,test_size=0.2,stratify=y,random_state=123)
 
-# Encode the target variable
-y = label_encoder.fit_transform(y_raw.values.ravel())  
+penalty='l2'
+multi_class='multnomial'
+solver='lbfgs'
+max_iter=1000
 
-X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, stratify=y, random_state=123)
+model = LogisticRegression(max_iter=2000)  # Increased max_iter for convergence
+model.fit(X_train, y_train)
 
-penalty = 'l2'
+# Model Prediction
+y_pred = model.predict(X_test)
 
-multi_class = 'multinomial'
-
-solver = 'lbfgs'
-
-# Max iteration = 1000
-max_iter = 1000
-
-l2_model = LogisticRegression(random_state=123, penalty=penalty, multi_class=multi_class, solver=solver, max_iter=max_iter)
-
-# Fit the model
-l2_model.fit(X_train, y_train)
-y_pred = l2_model.predict(X_test)
-
-print("\nModel Evaluation:")
-print("Accuracy:", accuracy_score(y_test, y_pred))
-print("\nClassification Report:")
-print(classification_report(y_test, y_pred))
-
-
+# Model Evaluation
+accuracy = accuracy_score(y_test, y_pred)
 conf_matrix = confusion_matrix(y_test, y_pred)
-print(conf_matrix)
+class_report = classification_report(y_test, y_pred)
+
+print("Model Accuracy:", accuracy)
+print("Confusion Matrix:\n", conf_matrix)
+print("Classification Report:\n", class_report)
+
+# Confusion Matrix Plot
+plt.figure(figsize=(5, 4))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='coolwarm', cbar=False, 
+            xticklabels=label_encoder.classes_, yticklabels=label_encoder.classes_)
+plt.title("Confusion Matrix")
+plt.xlabel("Predicted")
+plt.ylabel("Actual")
+plt.show()
 ```
 
 ## Output:
-
-![image](https://github.com/user-attachments/assets/5e692a53-4d58-40b1-88f9-82c44e336dcd)
-![image](https://github.com/user-attachments/assets/0e9e6819-8c52-43fb-9369-e559cc96a745)
-![image](https://github.com/user-attachments/assets/86f49017-b3c0-4af3-8030-93f32896c5d2)
-![image](https://github.com/user-attachments/assets/214704e7-2a8b-4462-9b3f-9cf6eee09518)
-
-
+### Dataset overview and info:
+![Screenshot 2025-05-15 001548](https://github.com/user-attachments/assets/d5e8cdac-d055-48b4-ba1b-e40d5825737a)
+![Screenshot 2025-05-15 001554](https://github.com/user-attachments/assets/c85bd670-0fe9-4295-9149-4dc82d956ef3)
+### Model efficiency:
+![Screenshot 2025-05-15 001619](https://github.com/user-attachments/assets/061ef8ef-40a3-49c6-a9a6-1ee8d969be29)
+### Confusion MATRIX:
+![Screenshot 2025-05-15 001626](https://github.com/user-attachments/assets/0b42cb53-7eb6-4806-9e54-c19042914868)
 
 ## Result:
 Thus, the logistic regression model was successfully implemented to classify food items for diabetic patients based on nutritional information, and the model's performance was evaluated using various performance metrics such as accuracy, precision, and recall.
